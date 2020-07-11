@@ -1,4 +1,4 @@
-""" Keras Tuner LGG Segmentation """ 
+""" Keras Tuner Chest Segmentation """ 
 
 import kerastuner as kt
 import tensorflow as tf
@@ -210,10 +210,12 @@ def conv2d_block(
 
 #import data for tuning the model 
 
-image_paths,mask_paths = load_images("Data/lgg-mri-segmentation/kaggle_3m/")
+image_paths,mask_paths = load_lung_images("Data/lgg-mri-segmentation/kaggle_3m/")
 
-if image_mask_check(image_paths, mask_paths):
-    masks,images = read_in_images(image_paths,mask_paths)
+masks,images = read_in_images(image_paths,mask_paths)
+
+images = images[0:400]
+masks = masks[0:400]
     
 for i in range(0,len(masks)):
     m = masks[i]
