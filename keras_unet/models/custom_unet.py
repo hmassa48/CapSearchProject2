@@ -64,12 +64,13 @@ def custom_unet(
     num_classes=1,
     activation="relu",
     use_batch_norm=True,
-    decoder_type = 'upsample',  # 'deconv' or 'simple'
+    decoder_type = 'transpose',  
     dropout=0.3,
     dropout_change_per_layer=0.0,
     dropout_type="standard",
     use_dropout_on_upsampling=False,
     use_attention=False,
+    strides = (2,2),
     filters=16,
     num_layers=4,
     output_activation="sigmoid",
@@ -117,19 +118,18 @@ def custom_unet(
         filters //= 2  # decreasing number of filters with each layer
         dropout -= dropout_change_per_layer
         if decoder_type == 'transpose':
-            x = Conv2DTranspose(filters, (3,3), strides=(2,2),
-                            padding='same', use_bias=not(use_batch_norm))(x)
+            x = Conv2DTranspose(filters, (3,3), strides=(2,2),padding='same', use_bias=not(use_batch_norm))(x)
             if use_batch_norm:
                 x = BatchNormalization()(x)
             x = Activation(activation)(x)
             x = concatenate([x, conv])
-            x = Conv2D(filters,(3,3),activation=activation,kernel_initializer='he_normal',padding='same',use_bias=not use_batch_norm)
+            x = Conv2D(filters, (3,3), padding="same",  use_bias=not(use_batch_norm))(x)
             if use_batch_norm:
                 x = BatchNormalization()(x)
             x = Activation(activation)(x)
 
         else:
-            x = UpSampling2D(filters, (2, 2), strides=(2, 2), padding="same")(x)
+            x = UpSampling2D(strides)(x)
             x = concatenate([x, conv])
             x = conv2d_block(
             inputs=x,

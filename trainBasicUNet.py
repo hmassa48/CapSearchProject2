@@ -14,7 +14,7 @@ from keras_unet.models import custom_unet
 
 from keras.optimizers import Adam
 from keras_unet.metrics import iou, iou_thresholded
-from keras_unet.losses import jaccard_distance
+
 
 
 
