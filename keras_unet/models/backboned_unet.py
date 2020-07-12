@@ -7,13 +7,16 @@ from .blocks import Upsample2D_block
 from ..utils import get_layer_number, to_tuple
 
 
-def backboned_unet(backbone, classes, skip_connection_layers,
-               decoder_filters=(256,128,64,32,16),
-               upsample_rates=(2,2,2,2,2),
-               n_upsample_blocks=5,
-               block_type='upsampling',
-               activation='sigmoid',
-               use_batchnorm=True):
+def backboned_unet(
+    backbone, 
+    num_classes, 
+    skip_connection_layers,
+    decoder_filters=(256,128,64,32,16),
+    upsample_rates=(2,2,2,2,2),
+    n_upsample_blocks=5,
+    block_type='upsampling',
+    activation='sigmoid',
+    use_batch_norm=True):
 
     input = backbone.input
     x = backbone.output
@@ -37,9 +40,10 @@ def backboned_unet(backbone, classes, skip_connection_layers,
         upsample_rate = to_tuple(upsample_rates[i])
 
         x = up_block(decoder_filters[i], i, upsample_rate=upsample_rate,
-                     skip=skip_connection, use_batchnorm=use_batchnorm)(x)
+                     skip=skip_connection, use_batch_norm=use_batch_norm)(x)
 
-    x = Conv2D(classes, (3,3), padding='same', name='final_conv')(x)
+
+    x = Conv2D(num_classes, (3,3), padding='same', name='final_conv')(x)
     x = Activation(activation, name=activation)(x)
 
     model = Model(input, x)
