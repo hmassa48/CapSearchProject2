@@ -11,6 +11,7 @@ import tqdm
 from sklearn.model_selection import train_test_split
 
 from keras_unet.models import custom_unet
+from keras_unet.losses import bce_dice_loss
 
 from keras.optimizers import Adam
 from keras_unet.metrics import iou, iou_thresholded
@@ -100,7 +101,8 @@ def main():
     
         model.compile(
             optimizer=opt, 
-            loss='binary_crossentropy',
+            #loss='binary_crossentropy',
+            loss = bce_dice_loss,
             metrics=[iou, iou_thresholded]
         )
 
