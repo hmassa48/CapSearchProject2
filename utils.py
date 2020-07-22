@@ -34,6 +34,7 @@ def load_lung_images(image_path,mask_path):
     same_name = set(os.listdir(image_path)) & set(os.listdir(mask_path))
     
     #files with masks
+    
     other_masks = [i for i in masks if "mask" in i]
     final_masks = list(same_name) + [x + '.png' for x in other_masks]
     final_images = [x.split('_mask')[0] for x in other_masks]
