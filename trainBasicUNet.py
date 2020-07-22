@@ -91,7 +91,7 @@ def main():
         ##Compile and Train
 
         #save each model if validation loss improves
-        model_filename = 'segm_model_v3.h5'
+        model_filename = 'UNet_Model'
         callback_checkpoint = ModelCheckpoint(
             model_filename, 
             verbose=1, 
