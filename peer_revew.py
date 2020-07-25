@@ -85,4 +85,27 @@ def main():
         img_train, mask_train,
         batch_size=16)
 
-    # ... then onto training the model that uses much more code from other sections 
+    #steps per epoch is the length of total training divided by the batch size 
+    STEPS_PER_EPOCH = len(img_train) // 16
+    #Get U Net 
+
+    #get model input shape 
+    input_shape = img_train[0].shape
+    
+    #set up the keras code to work with multiple GPUS 
+    #train the model within the scope that will allow it to 
+    with strategy.scope():
+        model = custom_unet(
+        input_shape,
+        filters=64,
+        use_batch_norm=False,
+        dropout=0.55,
+        dropout_change_per_layer=0.0,
+        num_layers=4,
+        decoder_type = 'simple'
+    )
+
+    
+    ##Compile and Train
+
+    # ... then onto training the model that uses much more code from other sections and is replicated elsewhere 
