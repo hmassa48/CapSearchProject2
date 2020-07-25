@@ -53,30 +53,6 @@ def load_lung_images(image_path,mask_path):
     
     return final_images, final_masks
 
-#checks to see if every MR and Mask image have a pair 
-def image_mask_check(image_path, mask_path):
-    #Return boolean of whether or not all images have masks 
-    img_wm=[]
-    for img_p in image_path:
-        img_p=img_p.split('.')
-        img_p[0]=img_p[0]+'_mask'
-        img_p='.'.join(img_p)
-        if img_p not in mask_path:
-            img_wm.append(img_p)
-
-    del mask_path
-    mask_path=[]
-    for img_p in image_path:
-        img_p=img_p.split('.')
-        img_p[0]=img_p[0]+'_mask'
-        img_p='.'.join(img_p)
-        mask_path.append(img_p)
-
-    if len(img_wm)==0:
-        return True
-    else:
-        return False
-
 #for the first 9 images in the array plot a 3 by 3 matrix of their images overlayed by mask
 def plot_figures(img_path, msk_path):
     rows,cols=3,3
@@ -94,7 +70,9 @@ def plot_figures(img_path, msk_path):
         plt.imshow(msk,alpha=0.4)
     plt.show()
 
+#Creates array of images read in from image path
 def read_in_images(msk_path,img_path):
+    #create empty array of images and masks 
     Images = []
     Masks = []
   
