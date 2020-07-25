@@ -25,33 +25,26 @@ def load_images(main_path):
 
 #Lung images were saved in a different format
 #This function allows the loading of lung images into the file 
-def load_lung_images(image_path,mask_path):
-    #get just image name from the paths 
-    images = os.listdir(image_path)
-    masks = os.listdir(mask_path)
-    
-    #split the mask name so that it will match the image name
-    masks = [file.split(".png")[0] for file in masks]
-    image_file_name = [file.split("_mask")[0] for file in masks]
-    
-    #files with the same name
-    #set all images and masks with the same name together 
-    same_name = set(os.listdir(image_path)) & set(os.listdir(mask_path))
-    
-    #other mask files were named something completely different 
-    other_masks = [i for i in masks if "mask" in i]
-    final_masks = list(same_name) + [x + '.png' for x in other_masks]
-    final_images = [x.split('_mask')[0] for x in other_masks]
-    final_images = list(same_name) + [x + '.png' for x in final_images]
-    
-    #sort the images so that they will line up 
-    final_masks.sort()
-    final_images.sort()
-    #get full path
-    final_images = [image_path + x for x in final_images]
-    final_masks = [mask_path + x for x in final_masks]
-    
-    return final_images, final_masks
+#function to load in lung images 
+def read_in_lung_images(lung_path,msk_path,img_path):
+    #create empty array to return with the lung images 
+    Images = []
+    Masks = []
+  
+    #loop through lung and mask images 
+    #create the path to those images and read in the values with cv2
+    #append the image to the respective array 
+    for img in img_path:
+        temp_img = lung_path+'/2d_images/' +img
+        temp_img = cv2.imread(temp_img)
+        Images.append(temp_img)
+
+    for msk in msk_path:
+        temp_msk = lung_path+ '/2d_masks/'+msk
+        temp_msk = cv2.imread(temp_msk)
+        Masks.append(temp_msk)
+
+    return Images, Masks
 
 #for the first 9 images in the array plot a 3 by 3 matrix of their images overlayed by mask
 def plot_figures(img_path, msk_path):
@@ -71,11 +64,11 @@ def plot_figures(img_path, msk_path):
     plt.show()
 
 #Creates array of images read in from image path
-def read_in_images(msk_path,img_path):
+def read_in_MR_images(msk_path,img_path):
     #create empty array of images and masks 
     Images = []
     Masks = []
-  
+    #for each respective array read in the images 
     for img in img_path:
         temp_img = cv2.imread(img)
         Images.append(temp_img)
