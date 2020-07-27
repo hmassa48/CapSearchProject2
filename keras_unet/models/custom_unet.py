@@ -1,3 +1,13 @@
+"""
+This custom U-Net model is based on the Ronneberger 2015 U-Net, along with later adjustments to the U-Net. 
+This custom u net was created based off of the custom u-net created in https://github.com/karolzak/keras-unet. 
+From that keras-unet, only the backbones for this custom u-net has been taken. None of the loss functions or metrics. 
+
+The custom u-net was changed. I removed the spatial dropout component, because it fits more for semantic segmentation that is not medical. Additionally,
+I changed the upsampling tracks. The original github contributed to the conv2d_block as well as a framework to loop through the reversed convolutional layers. This was not the first work to also use a conv_2d block, but I chose this github because the block was well-defined. It was also not the first github to go through the reversed convolutional layers because that can be seen in the U-Net ++ code as well. I just wanted to cite this code, as it is named similarly and it inspired my general framework for customization. I also took their conv2d block, with minor modifications. 
+"""
+
+
 from keras.models import Model
 from keras.layers import (
         BatchNormalization,
