@@ -7,4 +7,5 @@ print('-----------------------------------------')
 from . import models
 from . import losses
 from . import metrics
+from . import model_utils
 
