@@ -1,50 +1,107 @@
 import tensorflow as tf
 from keras import backend as K
 
-#metric for the intersection over union bound
-def iou(y_true, y_pred, smooth=1.):
-    #flatten out the array of evaluation images 
-    y_true_f = K.flatten(y_true)
-    y_pred_f = K.flatten(y_pred)
-    #calculate the intersection between images 
-    intersection = K.sum(y_true_f * y_pred_f)
-    #return the intersection over the boundary of images 
-    return (intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) - intersection + smooth)
 
-#create a binary threshold for more accurate IOU (thresholded metric)
+def iou(truth, prediction, smooth=1.):
+    truth_f = K.flatten(truth)
+    pred_f = K.flatten(prediction)
+    intersection = K.sum(truth_f * pred_f)
+    return (intersection + smooth) / (K.sum(truth_f) + K.sum(pred_f) - intersection + smooth)
+
 def threshold_binarize(x, threshold=0.5):
-    #calculate if a factor is greater than or equal to the binary constant 
     ge = tf.greater_equal(x, tf.constant(threshold))
-    #anywhre it is greater than mark as a one, anywhere it is less mark as 0 
     y = tf.where(ge, x=tf.ones_like(x), y=tf.zeros_like(x))
     return y
 
-#create the metric for the thresholded IOU
-def iou_thresholded(y_true, y_pred, threshold=0.5, smooth=1.):
-    #binarize the prediced image 
-    y_pred = threshold_binarize(y_pred, threshold)
-    #perform the same IOU technique from above 
-    y_true_f = K.flatten(y_true)
-    y_pred_f = K.flatten(y_pred)
-    intersection = K.sum(y_true_f * y_pred_f)
-    return (intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) - intersection + smooth)
+def iou_thresholded(truth, prediction, threshold=0.5, smooth=1.):
+    #binarize the prediction image
+    thres_pred = threshold_binarize(prediction, threshold)
+    return iou(truth, thres_pred, smooth)
 
-#create a metric for th pixel-wise accuracy of a function 
+""" 
+Pixel Accuracy, Precision, Recall Calculated using the basis of the blog post below 
+https://www.jeremyjordan.me/evaluating-image-segmentation-models/
+
+"""
+
+#accuracy is defined as the correct/total 
 def pixelwise_accuracy(truth, prediction):
+    #number of images to loop through
     num_images = truth.shape[0]
-    sum_n_ii = 0
-    sum_t_i = 0
+    #correct and total for final division
+    sum_correct = 0
+    sum_total = 0
     
-    for i in range(0, num_images):
-        curr_eval_mask = truth[i, :, :]
-        curr_gt_mask = prediction[i, :, :]
+    for i in range(0,num_images):
+        #evaluate current mask 
+        eval_prediction = prediction[i,:,:]
+        eval_test = truth[i,:,:]
+        #add up similarities and total values 
+        sum_total += eval_test.shape[0] *eval_test.shape[1]
+        for w in range(0,eval_test.shape[0]):
+            for h in range(0,eval_test.shape[1]):
+                if (eval_prediction[w,i] == eval_test[w,i]):
+                    sum_correct += 1
+    return sum_correct/sum_total
 
-        sum_n_ii += np.sum(np.logical_and(curr_eval_mask, curr_gt_mask))
-        sum_t_i  += np.sum(curr_gt_mask)
-        
-    if (sum_t_i == 0):
-        pixel_accuracy = 0
+#threshold the pixelwise accuracy value using two functions we already have 
+def thresholded_pixelwise_accuracy(truth, prediction):
+    new_preds = threshold_binarize(prediction,0.5)
+    return pixelwise_accuracy(truth, new_preds)
+
+#precision is known as the TP/(TP+FP)
+#this shows the purity 
+
+def thresholded_precision(truth,prediction):
+    #binarize threshold
+    new_preds = threshold_binarize(prediction, 0.5)
+    #starting loop and shape variables 
+    num_images = truth.shape[0]
+    num_TP = 0
+    num_predictedPositives = 0 
+    
+    #loop through all images 
+    for i in range(0,num_images):
+        #evaluate current mask 
+        eval_prediction = new_preds[i,:,:]
+        eval_test = truth[i,:,:]
+        #find total positive guesses 
+        for w in range(0,eval_test.shape[0]):
+            for h in range(0,eval_test.shape[1]):
+                if (eval_prediction[w,h] == 1):
+                    num_predictedPositives +=1
+                    if (eval_test[w,h] == 1):
+                        num_TP +=1 
+    
+    if (num_predictedPositives ==0):
+        return 0 
     else:
-        pixel_accuracy = sum_n_ii / sum_t_i
-
-    return pixel_accuracy
+        return num_TP/num_predictedPositives 
+    
+#TP / TP + FN 
+#recall shows the completeness 
+def thresholded_recall(truth,prediction):
+    #binarize threshold
+    new_preds = threshold_binarize(prediction, 0.5)
+    #starting loop and shape variables 
+    num_images = truth.shape[0]
+    num_TP = 0
+    num_allPositives = 0 
+    
+    #loop through all images 
+    for i in range(0,num_images):
+        #evaluate current mask 
+        eval_prediction = new_preds[i,:,:]
+        eval_test = truth[i,:,:]
+        #find total positive guesses 
+        for w in range(0,eval_test.shape[0]):
+            for h in range(0,eval_test.shape[1]):
+                if (eval_test[w,h] == 1):
+                    num_allPositives +=1
+                    if (eval_prediction[w,h] == 1):
+                        num_TP +=1 
+    
+    if (num_allPositives ==0):
+        return 0 
+    else:
+        return num_TP/num_allPositives 
