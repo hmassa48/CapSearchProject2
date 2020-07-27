@@ -1,4 +1,6 @@
-""" Keras Tuner LGG Segmentation """ 
+""" 
+Tunable Hyper-Parameter U-Net. Based on the network created in the customizable U-Net but tunable with the keras-tuner. 
+"""
 
 import kerastuner as kt
 import tensorflow as tf
@@ -30,8 +32,6 @@ from tensorflow.keras.layers import (
 class HyperBasicUNet(hypermodel.HyperModel):
     """A UNet HyperModel.
     # Arguments:
-        include_top: whether to include the fully-connected
-            layer at the top of the network.
         input_shape: Optional shape tuple, e.g. `(256, 256, 3)`.
               One of `input_shape` or `input_tensor` must be
               specified.
