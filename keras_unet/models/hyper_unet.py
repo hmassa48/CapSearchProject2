@@ -82,7 +82,6 @@ class HyperBasicUNet(hypermodel.HyperModel):
         decoder_type = hp.Choice('decoder_type', values = ['simple', 'transpose'])
         
         #hyperparameters not tuning
-        dropout_type="standard"
         output_activation="sigmoid"
         #decoder_type = 'simple'
         activation = 'relu'
@@ -100,7 +99,6 @@ class HyperBasicUNet(hypermodel.HyperModel):
             filters=filters,
             use_batch_norm=use_batch_norm,
             dropout=dropout,
-            dropout_type=dropout_type,
             activation=activation,
             )
             down_layers.append(x)
@@ -113,7 +111,6 @@ class HyperBasicUNet(hypermodel.HyperModel):
             filters=filters,
             use_batch_norm=use_batch_norm,
             dropout=dropout,
-            dropout_type=dropout_type,
             activation=activation,
         )
 
@@ -144,7 +141,6 @@ class HyperBasicUNet(hypermodel.HyperModel):
                 filters=filters,
                 use_batch_norm=use_batch_norm,
                 dropout=dropout,
-                dropout_type=dropout_type,
                 activation=activation,
             )
 
@@ -168,31 +164,22 @@ def conv2d_block(
         inputs,
         use_batch_norm=True,
         dropout=0.3,
-        dropout_type="standard",
         filters=16,
         kernel_size=(3, 3),
         activation="relu",
         kernel_initializer="he_normal",
         padding="same"):
 
-        if dropout_type == "spatial":
-            DO = SpatialDropout2D
-        elif dropout_type == "standard":
-            DO = Dropout
-        else:
-            raise ValueError(
-                f"dropout_type must be one of ['spatial', 'standard'], got {dropout_type}"
-            )
 
         c = Conv2D(filters,kernel_size,activation=activation,
-        kernel_initializer=kernel_initializer,
-        padding=padding,use_bias=not use_batch_norm)(inputs)
+                kernel_initializer=kernel_initializer,
+                padding=padding,use_bias=not use_batch_norm)(inputs)
         if use_batch_norm:
             c = BatchNormalization()(c)
         if dropout > 0.0:
             c = Dropout(dropout)(c)
         c = Conv2D(filters,kernel_size,activation=activation,
-            kernel_initializer=kernel_initializer,padding=padding,use_bias=not use_batch_norm)(c)
+                kernel_initializer=kernel_initializer,padding=padding,use_bias=not use_batch_norm)(c)
         if use_batch_norm:
             c = BatchNormalization()(c)
         return c
