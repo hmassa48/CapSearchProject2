@@ -1,4 +1,9 @@
+"""
+This file works to define some different metrics that are used when evaluating the images. 
+"""
+
 import tensorflow as tf
+import numpy as np
 from keras import backend as K
 
 
@@ -105,3 +110,10 @@ def thresholded_recall(truth,prediction):
         return 0 
     else:
         return num_TP/num_allPositives 
+
+def mse(mask_test,preds):
+    return (np.square(preds - mask_test)).mean(axis=None)
+
+def mae(mask_test,preds):
+    return np.abs(preds-mask_test).mean(axis=None)
+
