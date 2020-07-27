@@ -15,7 +15,6 @@ from keras.layers import (
         Conv2DTranspose,
         MaxPooling2D,
         Dropout,
-        SpatialDropout2D,
         UpSampling2D,
         Input,
         concatenate,
@@ -27,7 +26,6 @@ def conv2d_block(
     inputs,
     use_batch_norm=True,
     dropout=0.3,
-    dropout_type="standard",
     filters=16,
     kernel_size=(3, 3),
     activation="relu",
@@ -35,14 +33,6 @@ def conv2d_block(
     padding="same",
 ):
 
-    if dropout_type == "spatial":
-        DO = SpatialDropout2D
-    elif dropout_type == "standard":
-        DO = Dropout
-    else:
-        raise ValueError(
-            f"dropout_type must be one of ['spatial', 'standard'], got {dropout_type}"
-        )
 
     c = Conv2D(
         filters,
@@ -55,7 +45,7 @@ def conv2d_block(
     if use_batch_norm:
         c = BatchNormalization()(c)
     if dropout > 0.0:
-        c = DO(dropout)(c)
+        c = Dropout(dropout)(c)
     c = Conv2D(
         filters,
         kernel_size,
@@ -103,7 +93,6 @@ def custom_unet(
             filters=filters,
             use_batch_norm=use_batch_norm,
             dropout=dropout,
-            dropout_type=dropout_type,
             activation=activation,
         )
         down_layers.append(x)
@@ -116,7 +105,6 @@ def custom_unet(
         filters=filters,
         use_batch_norm=use_batch_norm,
         dropout=dropout,
-        dropout_type=dropout_type,
         activation=activation,
     )
 
@@ -146,7 +134,6 @@ def custom_unet(
             filters=filters,
             use_batch_norm=use_batch_norm,
             dropout=dropout,
-            dropout_type=dropout_type,
             activation=activation,
         )
 
