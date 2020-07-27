@@ -1,4 +1,4 @@
-# CapSearchProject
+# Tunable U-Net Architecture
 
 This project works to answer the question:  Is there a best U-Net architecture? 
 
