@@ -132,16 +132,19 @@ class HyperBasicUNet(hypermodel.HyperModel):
                 if use_batch_norm:
                     x = BatchNormalization()(x)
                 x = Activation(activation)(x)
-
+                
             else:
-                x = UpSampling2D(strides)(x)
+                if decoder_type == 'simple_bilinear':
+                    x = UpSampling2D(interpolation='bilinear')(x)
+                else:
+                    x = UpSampling2D(strides)(x)
                 x = concatenate([x, conv])
                 x = conv2d_block(
-                inputs=x,
-                filters=filters,
-                use_batch_norm=use_batch_norm,
-                dropout=dropout,
-                activation=activation,
+                    inputs=x,
+                    filters=filters,
+                    use_batch_norm=use_batch_norm,
+                    dropout=dropout,
+                    activation=activation,
             )
 
         outputs = Conv2D(self.classes, (1, 1), activation=output_activation)(x)
