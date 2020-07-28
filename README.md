@@ -6,6 +6,19 @@ It does this through the use of the keras-tuner. It is important to run the kera
 
 To run the tuner, it is set up to run similar to the in keras models. 
 
+## Running the Tunable U-Net 
+
+### Full U-Net Search
+
+### Architectural U-Net Search for Project
+
+### Other Tunable U-Nets 
+
+
+## Training for Data Sets included in Project 
+
+This project ran the tunable U-Net network to evaluate the best architecture for four different datasets. These datasets can be found listed below, but there were different pre-processing and training techniques used for each. A toy dataset for each of the models has been added. 
+
 ## Running on the Euler Cluster 
 
 Run the environment saved in the files above
