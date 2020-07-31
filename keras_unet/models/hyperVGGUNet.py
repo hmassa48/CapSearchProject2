@@ -28,8 +28,14 @@ from tensorflow.keras.layers import (
 )
 
 
+DEFAULT_SKIP_CONNECTIONS = {
+    'vgg16':            ('block5_conv3', 'block4_conv3', 'block3_conv3', 'block2_conv2', 'block1_conv2'),
+    'vgg19':            ('block5_conv4', 'block4_conv4', 'block3_conv4', 'block2_conv2', 'block1_conv2'))
 
-class HyperBasicUNet(hypermodel.HyperModel):
+
+
+
+class HyperVGGUNet(hypermodel.HyperModel):
     """A UNet HyperModel.
     # Arguments:
         input_shape: Optional shape tuple, e.g. `(256, 256, 3)`.
