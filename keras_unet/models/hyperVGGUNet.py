@@ -8,6 +8,8 @@ import tensorflow.keras as keras
 from tensorflow.keras import layers
 from tensorflow.keras import backend
 
+from backbones import get_backbone
+
 from kerastuner.engine import hypermodel
 from ..metrics import iou, iou_thresholded
 
@@ -66,8 +68,6 @@ def conv2d_block(
     if use_batch_norm:
         c = BatchNormalization()(c)
     return c
-
-
 
 
 class HyperVGGUNet(hypermodel.HyperModel):
