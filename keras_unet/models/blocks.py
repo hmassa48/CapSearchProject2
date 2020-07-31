@@ -1,3 +1,12 @@
+"""
+Re-used block within all of the U-Net models. Implemented and slightly modified by removing parts from https://github.com/karolzak/keras-unet
+
+"""
+
+
+
+
+
 def conv2d_block(
     inputs,
     use_batch_norm=True,
