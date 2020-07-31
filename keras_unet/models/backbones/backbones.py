@@ -1,3 +1,9 @@
+"""
+Adopted from the U-Net++ Framework for analysis 
+"""
+
+
+
 #Backbones using keras applications built in models
 
 from keras.applications import DenseNet121, DenseNet169, DenseNet201
