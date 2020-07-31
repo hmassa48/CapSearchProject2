@@ -9,7 +9,7 @@ from tensorflow.keras import layers
 from tensorflow.keras import backend
 
 from backbones.backbones import get_backbone
-
+from blocks import conv2d_block
 from kerastuner.engine import hypermodel
 from ..metrics import iou, iou_thresholded
 
@@ -34,40 +34,6 @@ DEFAULT_SKIP_CONNECTIONS = {
     'vgg16':            ('block5_conv3', 'block4_conv3', 'block3_conv3', 'block2_conv2', 'block1_conv2'),
     'vgg19':            ('block5_conv4', 'block4_conv4', 'block3_conv4', 'block2_conv2', 'block1_conv2')}
 
-
-def conv2d_block(
-    inputs,
-    use_batch_norm=True,
-    dropout=0.3,
-    filters=16,
-    kernel_size=(3, 3),
-    activation="relu",
-    kernel_initializer="he_normal",
-    padding="same",
-):
-    c = Conv2D(
-        filters,
-        kernel_size,
-        activation=activation,
-        kernel_initializer=kernel_initializer,
-        padding=padding,
-        use_bias=not use_batch_norm,
-    )(inputs)
-    if use_batch_norm:
-        c = BatchNormalization()(c)
-    if dropout > 0.0:
-        c = Dropout(dropout)(c)
-    c = Conv2D(
-        filters,
-        kernel_size,
-        activation=activation,
-        kernel_initializer=kernel_initializer,
-        padding=padding,
-        use_bias=not use_batch_norm,
-    )(c)
-    if use_batch_norm:
-        c = BatchNormalization()(c)
-    return c
 
 
 class HyperVGGUNet(hypermodel.HyperModel):
