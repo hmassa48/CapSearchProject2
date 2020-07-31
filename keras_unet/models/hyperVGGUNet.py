@@ -120,7 +120,7 @@ class HyperVGGUNet(hypermodel.HyperModel):
         dropout = hp.Float('dropout', 0, 0.4, 0.05, default = 0)
         #dropout_change_per_layer = hp.Float('drop_out_change_per_layer', 0.0,0.3,0.025)
         use_dropout_on_upsampling = hp.Boolean('dropout_on_upsampling', default = False)
-        decoder_type = hp.Choice('decoder_type', values = ['simple', 'transpose'])
+        decoder_type = hp.Choice('decoder_type', values = ['simple', 'transpose','simple_bilinear'])
         
         #hyperparameters not tuning
         output_activation="sigmoid"
