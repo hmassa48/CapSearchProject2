@@ -31,6 +31,42 @@ def normalize_MRIvolume(MRI_volume):
 
 
 """
+Set Up for Pre-processing each of the image and mask 
+"""
+def preprocess_img_msks(images,masks,target_size, num_classes, isMR = False, isGray = False ):
+    for i in range(0,len(masks)):
+        m = masks[i]
+        m = m[:,:,0]
+        m.reshape(m.shape[0],m.shape[1])
+        m = cv2.resize(m,target_size)
+        masks[i] = m
+        #images
+        im = images[i]
+        im = cv2.resize(im,target_size)
+        if isMR:
+            img = normalize_MRIvolume(im)
+        images[i] = im
+    
+    #convert to numpy
+    images = np.asarray(images dtype=np.float32)
+    masks = np.asarray(masks, dtype=np.float32)
+    
+    #divide by the largest amount to normalize 
+    masks = masks / masks.max()
+    if isGray:
+        images = images / images.max()
+
+    masks = masks.reshape(masks.shape[0], masks.shape[1], masks.shape[2], num_classes)
+
+    if isGray:
+        images = images.reshape(images.shape[0], images.shape[1], images.shape[2], 1)
+
+    return images,masks 
+
+
+
+
+"""
 Simple Data Augmentations 
 Not used in this work explicitly but prepared in case they would be used to create more data and more robust algorithms. 
 This work decided to evaluate the U-Net on data that did not create more synthetic images. 
