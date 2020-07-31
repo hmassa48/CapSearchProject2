@@ -8,6 +8,7 @@ import tensorflow.keras as keras
 from tensorflow.keras import layers
 from tensorflow.keras import backend
 
+from blocks import conv2d_block
 from kerastuner.engine import hypermodel
 from ..metrics import iou, iou_thresholded
 
@@ -163,26 +164,3 @@ class HyperBasicUNet(hypermodel.HyperModel):
                 metrics=[iou, iou_thresholded])
         return model
     
-def conv2d_block(
-        inputs,
-        use_batch_norm=True,
-        dropout=0.3,
-        filters=16,
-        kernel_size=(3, 3),
-        activation="relu",
-        kernel_initializer="he_normal",
-        padding="same"):
-
-
-        c = Conv2D(filters,kernel_size,activation=activation,
-                kernel_initializer=kernel_initializer,
-                padding=padding,use_bias=not use_batch_norm)(inputs)
-        if use_batch_norm:
-            c = BatchNormalization()(c)
-        if dropout > 0.0:
-            c = Dropout(dropout)(c)
-        c = Conv2D(filters,kernel_size,activation=activation,
-                kernel_initializer=kernel_initializer,padding=padding,use_bias=not use_batch_norm)(c)
-        if use_batch_norm:
-            c = BatchNormalization()(c)
-        return c
