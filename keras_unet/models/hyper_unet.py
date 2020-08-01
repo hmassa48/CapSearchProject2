@@ -134,9 +134,9 @@ class HyperBasicUNet(hypermodel.HyperModel):
                 
             else:
                 if decoder_type == 'simple_bilinear':
-                    x = UpSampling2D(interpolation='bilinear')(x)
+                    x = Conv2D(filters, 2, activation = activation, padding = 'same', kernel_initializer = 'he_normal')(UpSampling2D(interpolation='bilinear')(x))
                 else:
-                    x = UpSampling2D(strides)(x)
+                    x = Conv2D(filters, 2, activation = activation, padding = 'same', kernel_initializer = 'he_normal')(UpSampling2D(strides)(x))
                 x = concatenate([x, conv])
                 x = conv2d_block(
                     inputs=x,
