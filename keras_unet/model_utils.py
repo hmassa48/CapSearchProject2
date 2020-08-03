@@ -48,7 +48,7 @@ def preprocess_img_msks(images,masks,target_size, num_classes, isMR = False, isG
         images[i] = im
     
     #convert to numpy
-    images = np.asarray(images dtype=np.float32)
+    images = np.asarray(images, dtype=np.float32)
     masks = np.asarray(masks, dtype=np.float32)
     
     #divide by the largest amount to normalize 
