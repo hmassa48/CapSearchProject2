@@ -83,10 +83,8 @@ def main():
     img_train, img_val, mask_train, mask_val = train_test_split(img_overall_train, mask_overall_train, test_size = 0.166667, random_state = 32)
     
 
-    #data generator 
-    train_gen = get_augmented(
-        img_train, mask_train, batch_size=16,
-        data_gen_args = dict(
+    #data rotation values 
+    data_aug_dict = dict(
        # rotation_range=15.,
         width_shift_range=0.05,
         height_shift_range=0.05,
@@ -95,7 +93,19 @@ def main():
         horizontal_flip=True,
         vertical_flip=True,
         fill_mode='nearest'
-    ))
+    )
+
+    #data generator 
+    train_datagen = ImageDataGenerator(data_aug_dict)
+
+    train_generator = train_datagen.flow(
+        img_train, mask_train,
+        batch_size=16)
+
+    val_generator = train_datagen.flow(
+        img_val, mask_val)
+   
+        
 
 
     STEPS_PER_EPOCH = len(img_train) // 16
