@@ -9,9 +9,8 @@ from keras.callbacks import ModelCheckpoint
 from utils import *
 import tqdm
 from sklearn.model_selection import train_test_split
-
+import cv2
 from keras_unet.models import custom_unet
-from keras_unet.model_utils import normalize_MRIvolume
 
 from keras.optimizers import Adam
 from keras_unet.metrics import iou, iou_thresholded
@@ -21,39 +20,63 @@ from keras_unet.losses import bce_dice_loss
 
 import numpy as np 
 
+def read_in_images(lung_path,msk_path,img_path):
+    Images = []
+    Masks = []
+  
+    for img in img_path:
+        temp_img = lung_path+'/2d_images/' +img
+        temp_img = cv2.imread(temp_img)
+        Images.append(temp_img)
+
+    for msk in msk_path:
+        temp_msk = lung_path+ '/2d_masks/'+msk
+        temp_msk = cv2.imread(temp_msk)
+        Masks.append(temp_msk)
+
+    return Images, Masks
 
 
 #Upload and prepare data 
 def main():
     #trainiing settings 
 
-    #Multi GPU strategy
-    strategy = tf.distribute.MirroredStrategy()   
+    #Multi GPU set up
+    strategy = tf.distribute.MirroredStrategy()    
+
 
     #load dataset
-    image_paths,mask_paths = load_images("lgg-mri-segmentation/kaggle_3m/")
+    lung_path = 'lung-masks'
 
-    image_paths = sorted(image_paths)
-    mask_paths = sorted(mask_paths)
+    img_path = lung_path + '/2d_images/'
+    msk_path = lung_path + '/2d_masks/'
 
-    if image_mask_check(image_paths, mask_paths):
-        masks,images = read_in_images(image_paths,mask_paths)
-    
+    imgs = os.listdir(img_path)
+    msks = os.listdir(msk_path)
+    #sort 
+    msks = sorted(msks)
+    imgs = sorted(imgs)
+
+    images,masks = read_in_images(lung_path,msks,imgs)
+
+
+	
     for i in range(0,len(masks)):
         m = masks[i]
         m = m[:,:,0]
         m.reshape(m.shape[0],m.shape[1])
+        m = cv2.resize(m,(256,256))
         masks[i] = m
-        #MRI Values
+        #images
         im = images[i]
-        images[i] = normalize_MRIvolume(im)
+        images[i] = cv2.resize(im,(256,256))
 
     #make Arrays 
     images = np.asarray(images)
     masks = np.asarray(masks)
     masks = masks / 255
     masks = masks.reshape(masks.shape[0],masks.shape[1],masks.shape[2],1)
-
+    
 
     #split the data
     img_overall_train, img_test, mask_overall_train, mask_test = train_test_split(images, masks, test_size=0.16667, random_state=42)
@@ -72,35 +95,32 @@ def main():
 
 
     STEPS_PER_EPOCH = len(img_train) // 16
-   # STEPS_PER_EPOCH = 250
     #Get U Net 
 
 
     input_shape = img_train[0].shape
-
     with strategy.scope():
-
         model = custom_unet(
         input_shape,
         filters=64,
         use_batch_norm=False,
+        use_dropout_on_upsampling = False,
         dropout=0.55,
+        activation = 'relu',
         dropout_change_per_layer=0.00,
         num_layers=4,
-        decoder_type = 'simple',
-        use_dropout_on_upsampling =False,
-        activation = 'relu'
+        decoder_type = 'simple'
     )
 
     
 
     ##Compile and Train
 
-        model_filename = 'Basic_LGG_aug_UNET_01LR.h5'
+        model_filename = 'traditional_600_LR0001_BASIC_LUNG_UNET.h5'
         callback_checkpoint = ModelCheckpoint(
         model_filename, 
         verbose=1, 
-        monitor='loss', 
+        monitor='val_loss', 
         save_best_only=True,
     )
         opt = keras.optimizers.Adam(learning_rate=0.0001)

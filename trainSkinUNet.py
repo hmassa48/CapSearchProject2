@@ -9,98 +9,122 @@ from keras.callbacks import ModelCheckpoint
 from utils import *
 import tqdm
 from sklearn.model_selection import train_test_split
-
+import cv2
 from keras_unet.models import custom_unet
-from keras_unet.model_utils import normalize_MRIvolume
 
 from keras.optimizers import Adam
 from keras_unet.metrics import iou, iou_thresholded
 from keras_unet.losses import bce_dice_loss
-
+from keras_unet.model_utils import get_augmented
 
 
 import numpy as np 
 
+def read_in_images(lung_path,msk_path,img_path):
+    Images = []
+    Masks = []
+  
+    for img in img_path:
+        temp_img = lung_path+'/image/' +img
+        temp_img = cv2.imread(temp_img)
+        Images.append(temp_img)
+
+    for msk in msk_path:
+        temp_msk = lung_path+ '/mask/'+msk
+        temp_msk = cv2.imread(temp_msk)
+        Masks.append(temp_msk)
+
+    return Images, Masks
 
 
 #Upload and prepare data 
 def main():
     #trainiing settings 
 
-    #Multi GPU strategy
-    strategy = tf.distribute.MirroredStrategy()   
+    #Multi GPU set up
+    strategy = tf.distribute.MirroredStrategy()    
+
 
     #load dataset
-    image_paths,mask_paths = load_images("lgg-mri-segmentation/kaggle_3m/")
+    skin_path = 'skin_lesions'
 
-    image_paths = sorted(image_paths)
-    mask_paths = sorted(mask_paths)
+    img_path = skin_path + '/image/'
+    msk_path = skin_path + '/mask/'
 
-    if image_mask_check(image_paths, mask_paths):
-        masks,images = read_in_images(image_paths,mask_paths)
-    
+    imgs = os.listdir(img_path)
+    msks = os.listdir(msk_path)
+    #sort 
+    msks = sorted(msks)
+    imgs = sorted(imgs)
+
+    images,masks = read_in_images(skin_path,msks,imgs)
+
+
+	
     for i in range(0,len(masks)):
         m = masks[i]
         m = m[:,:,0]
         m.reshape(m.shape[0],m.shape[1])
+        m = cv2.resize(m,(256,256))
         masks[i] = m
-        #MRI Values
+        #images
         im = images[i]
-        images[i] = normalize_MRIvolume(im)
+        images[i] = cv2.resize(im,(256,256))
 
     #make Arrays 
     images = np.asarray(images)
     masks = np.asarray(masks)
     masks = masks / 255
     masks = masks.reshape(masks.shape[0],masks.shape[1],masks.shape[2],1)
-
+    
 
     #split the data
     img_overall_train, img_test, mask_overall_train, mask_test = train_test_split(images, masks, test_size=0.16667, random_state=42)
     img_train, img_val, mask_train, mask_val = train_test_split(img_overall_train, mask_overall_train, test_size = 0.166667, random_state = 32)
-   
+    
+
     #data generator 
-    train_datagen = ImageDataGenerator()
-
-    train_generator = train_datagen.flow(
-        img_train, mask_train,
-        batch_size=16)
-
-    val_generator = train_datagen.flow(
-        img_val, mask_val)
-
+    train_gen = get_augmented(
+        img_train, mask_train, batch_size=16,
+        data_gen_args = dict(
+       # rotation_range=15.,
+        width_shift_range=0.05,
+        height_shift_range=0.05,
+        shear_range=0.05,
+        zoom_range=0.05,
+        horizontal_flip=True,
+        vertical_flip=True,
+        fill_mode='nearest'
+    ))
 
 
     STEPS_PER_EPOCH = len(img_train) // 16
-   # STEPS_PER_EPOCH = 250
     #Get U Net 
 
 
     input_shape = img_train[0].shape
-
     with strategy.scope():
-
         model = custom_unet(
         input_shape,
         filters=64,
         use_batch_norm=False,
+        use_dropout_on_upsampling = False,
         dropout=0.55,
+        activation = 'relu',
         dropout_change_per_layer=0.00,
         num_layers=4,
-        decoder_type = 'simple',
-        use_dropout_on_upsampling =False,
-        activation = 'relu'
+        decoder_type = 'simple'
     )
 
     
 
     ##Compile and Train
 
-        model_filename = 'Basic_LGG_aug_UNET_01LR.h5'
+        model_filename = 'basic_600_BDice_LR001_BASIC_SKIN_UNET.h5'
         callback_checkpoint = ModelCheckpoint(
         model_filename, 
         verbose=1, 
-        monitor='loss', 
+        monitor='val_loss', 
         save_best_only=True,
     )
         opt = keras.optimizers.Adam(learning_rate=0.0001)
@@ -114,7 +138,7 @@ def main():
 
 
         history = model.fit_generator(
-        train_generator,
+        train_gen,
         steps_per_epoch=STEPS_PER_EPOCH,
         epochs=600,
         validation_data=(img_val, mask_val),
