@@ -46,7 +46,7 @@ def main():
 
 
     #load dataset
-    lung_path = 'lung-masks'
+    lung_path = 'Data/lung-masks'
 
     img_path = lung_path + '/2d_images/'
     msk_path = lung_path + '/2d_masks/'
