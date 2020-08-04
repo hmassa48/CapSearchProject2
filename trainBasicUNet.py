@@ -31,7 +31,7 @@ def main():
     strategy = tf.distribute.MirroredStrategy()   
 
     #load dataset
-    image_paths,mask_paths = load_images("lgg-mri-segmentation/kaggle_3m/")
+    image_paths,mask_paths = load_images("Data/lgg-mri-segmentation/kaggle_3m/")
 
     image_paths = sorted(image_paths)
     mask_paths = sorted(mask_paths)
