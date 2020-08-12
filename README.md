@@ -10,10 +10,17 @@ To run the tuner, it is set up to run similar to the in keras models.
 
 ### Full U-Net Search
 
+This work created a tunable U-Net architecture using the Keras-Tuner.
+
 ### Architectural U-Net Search for Project
+
+For this work, I focused on the architectural aspects of the U-Net model. For this reason, I fixed some hyperparameters in the tunable U-Net so that only the 8 parameters I wanted to tune were tuned. This can be done and is shown in the image below. 
+
+![Fixed Parameters](/Images/FixedParameters.png)
 
 ### Other Tunable U-Nets 
 
+Work is being done to add more tunable U-Nets to the repository. 
 
 ## Training for Data Sets included in Project 
 
