@@ -19,6 +19,12 @@ To run the tuner, it is set up to run similar to the in keras models.
 
 This project ran the tunable U-Net network to evaluate the best architecture for four different datasets. These datasets can be found listed below, but there were different pre-processing and training techniques used for each. A toy dataset for each of the models has been added. 
 
+### Lung Segmentation U-Net
+
+### LGG Brain MR Segmentation U-Net
+
+### Skin Lesion Segmentation U-Net
+
 ## Running on the Euler Cluster 
 
 Run the environment saved in the files above
