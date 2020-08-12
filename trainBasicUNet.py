@@ -1,3 +1,7 @@
+"""
+Used to train the LGG Brain Segmentation U-Net model. This was used to train the traditional U-Net and tuned parameter U-Net by changing the parameters. 
+"""
+
 import tensorflow as tf
 import tensorflow.keras as keras
 from tensorflow.keras import layers
