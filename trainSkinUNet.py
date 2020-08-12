@@ -1,3 +1,7 @@
+"""
+This is a script that works to train the Skin model. Change the custom U-Net parameters and the name of the file to save to run the script and save a model with new parameters. This was used to run the traditional Skin U-Net and the U-Net with tuned parameters. 
+"""
+
 import tensorflow as tf
 import tensorflow.keras as keras
 from tensorflow.keras import layers
