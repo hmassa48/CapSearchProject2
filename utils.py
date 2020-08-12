@@ -1,3 +1,7 @@
+"""
+This utils script is a script for loading in images and plotting the figures. This differs from the other utils function which revolves around work with the model. This function works to create utility functions that help with loading in the data, for evaluation and training, and plotting the figures for evaluation. 
+"""
+
 import os
 import sys 
 import random
