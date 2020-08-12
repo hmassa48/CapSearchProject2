@@ -1,3 +1,6 @@
+"""
+This is a script that train the Lung U-Net model. Used to train both the traditional U-Net and tuned parameter U-Net, by changing custom U-Net parameters in script. 
+"""
 import tensorflow as tf
 import tensorflow.keras as keras
 from tensorflow.keras import layers
