@@ -31,60 +31,43 @@ from tensorflow.python.client import device_lib
 print(device_lib.list_local_devices())
 
 
-NUM_EPOCH_SEARCH = 50
-
-def read_in_images(lung_path,msk_path,img_path):
-    Images = []
-    Masks = []
-  
-    for img in img_path:
-        temp_img = lung_path+'/image/' +img
-        temp_img = cv2.imread(temp_img)
-        Images.append(temp_img)
-
-    for msk in msk_path:
-        temp_msk = lung_path+ '/mask/'+msk
-        temp_msk = cv2.imread(temp_msk)
-        Masks.append(temp_msk)
-
-    return Images, Masks
-
-
-
 #load dataset
 skin_path = 'Data/skin_lesions'
 
+#paths to images and masks within the overall skin path
 img_path = skin_path + '/image/'
 msk_path = skin_path + '/mask/'
 
+#list possible images and masks
 imgs = os.listdir(img_path)
 msks = os.listdir(msk_path)
 
- #sort 
+#sort images and masks to correlate same images with masks
 msks = sorted(msks)
 imgs = sorted(imgs)
 
-images,masks = read_in_images(skin_path,msks,imgs)
+#read in the skin images and masks
+images,masks = read_in_skin_images(skin_path,msks,imgs)
 
-
+#preprocess the skin images 
         
 for i in range(0,len(masks)):
     m = masks[i]
-    m = m[:,:,0]
-    m.reshape(m.shape[0],m.shape[1])
-    m = cv2.resize(m,(256,256))
+    m = m[:,:,0] #binarize the mask
+    m.reshape(m.shape[0],m.shape[1]) #reshape the binary mask
+    m = cv2.resize(m,(256,256)) #resize the masks to a standard size for memory constraints
     masks[i] = m
     #images
     im = images[i]
-    images[i] = cv2.resize(im,(256,256))
+    images[i] = cv2.resize(im,(256,256)) #resize the images to a standard size for memory constraints
 
 
 
-#make Arrays 
+#convert the images to arrays
 images = np.asarray(images)
 masks = np.asarray(masks)
-masks = masks / 255
-masks = masks.reshape(masks.shape[0],masks.shape[1],masks.shape[2],1)
+masks = masks / masks.max() #normalize the mask images 
+masks = masks.reshape(masks.shape[0],masks.shape[1],masks.shape[2],1) #save mask images in a binary format
 
 
 #split into validations
@@ -112,9 +95,11 @@ train_generator = train_datagen.flow(
 val_generator = train_datagen.flow(
     img_test, mask_test)
 
-
+#load the keras-tuner U-Net architecture 
 hypermodel = HyperBasicUNet(input_shape = (256,256,3), classes = 1)
 
+#create the hyperband search strategy for the keras-tuner 
+#different values chosen based on memory constraints
 tuner_hb = Hyperband(
             hypermodel,
             max_epochs=200,
@@ -125,17 +110,19 @@ tuner_hb = Hyperband(
             hyperband_iterations = 3
         )
 
+#print total search space for reference
 tuner_hb.search_space_summary()
 
-
+#search through the search space
 tuner_hb.search(train_generator,epochs = 500,verbose = 1,validation_data = (img_test,mask_test))
 
+#save best models and hyperparameters
 best_model = tuner_hb.get_best_models(1)[0]
 
 best_hyperparameters = tuner_hb.get_best_hyperparameters(1)[0]
 print(tuner_hb.get_best_hyperparameters(1))
 
-#
+#save best models and weights
 model_json = best_model.to_json()
 with open("hp_bce_all_basicUNet_model.json", "w") as json_file:
     json_file.write(model_json)
@@ -145,7 +132,7 @@ best_model.save_weights("hp_bce_all_tune_basicUNet_tuner_model.h5")
 with open('best_LGG_basicUNet_Param.txt', 'w') as f:
     print(best_hyperparameters, file=f)
 
-
 print("Saved model to disk")
 print(best_hyperparameters)
+#show top 10 architectures 
 tuner_hb.results_summary()
