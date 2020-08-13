@@ -24,6 +24,7 @@ import cv2
 from utils import *
 from keras_unet.metrics import iou, iou_thresholded
 from keras_unet.losses import bce_dice_loss
+from keras_unet.models import HyperUNet
 
 
 from tensorflow.python.client import device_lib
@@ -95,8 +96,13 @@ train_generator = train_datagen.flow(
 val_generator = train_datagen.flow(
     img_test, mask_test)
 
+hp = HyperParameters()
+#fix algorithmic hyperparameters
+hp.Fixed('learning rate', value = 0.001)
+hp.Fixed('optimizer_name', value = 'adam')
+hp.Fixed('kernel', value = 3)
 
-hypermodel = HyperUNet(
+hypermodel = HyperUNet(input_shape = (256,256,3), classes = 1)
 
 tuner_hb = Hyperband(
             hypermodel,
