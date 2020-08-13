@@ -30,6 +30,8 @@ This project ran the tunable U-Net network to evaluate the best architecture for
 
 ### Lung Segmentation U-Net
 
+To run the Lung Dataset, you need to run the python script for the 
+
 ### LGG Brain MR Segmentation U-Net
 
 ### Skin Lesion Segmentation U-Net
