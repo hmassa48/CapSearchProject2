@@ -50,6 +50,7 @@ def iou_thresholded(truth, prediction, threshold=0.5, smooth=1.):
 """ 
 Pixel Accuracy, Precision, Recall Calculated using the basis of the blog post below 
 https://www.jeremyjordan.me/evaluating-image-segmentation-models/
+My own code
 
 """
 
