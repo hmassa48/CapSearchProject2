@@ -21,8 +21,6 @@ from keras.optimizers import Adam
 from keras_unet.metrics import iou, iou_thresholded
 from keras_unet.losses import bce_dice_loss
 
-
-
 import numpy as np 
 
 
@@ -37,26 +35,29 @@ def main():
     #load dataset
     image_paths,mask_paths = load_images("Data/lgg-mri-segmentation/kaggle_3m/")
 
+    #sort images and masks
     image_paths = sorted(image_paths)
     mask_paths = sorted(mask_paths)
 
+    #read in images and masks 
     if image_mask_check(image_paths, mask_paths):
         masks,images = read_in_MR_images(image_paths,mask_paths)
     
+    #basic pre-processing with MR additives
     for i in range(0,len(masks)):
         m = masks[i]
-        m = m[:,:,0]
-        m.reshape(m.shape[0],m.shape[1])
+        m = m[:,:,0] #binarize the masks 
+        m.reshape(m.shape[0],m.shape[1]) #set up binarize shape for masks
         masks[i] = m
         #MRI Values
         im = images[i]
-        images[i] = normalize_MRIvolume(im)
+        images[i] = normalize_MRIvolume(im) #normalize the MR images with histogram normalization
 
     #make Arrays 
     images = np.asarray(images)
     masks = np.asarray(masks)
-    masks = masks / 255
-    masks = masks.reshape(masks.shape[0],masks.shape[1],masks.shape[2],1)
+    masks = masks / masks.max() #normalize masks
+    masks = masks.reshape(masks.shape[0],masks.shape[1],masks.shape[2],1) #set up binarize shape for masks
 
 
     #split the data
@@ -74,16 +75,18 @@ def main():
         img_val, mask_val)
 
 
-
+    #standardize steps per epoch based on image dataset and batch size 
     STEPS_PER_EPOCH = len(img_train) // 16
    # STEPS_PER_EPOCH = 250
+    
+    
     #Get U Net 
 
+    input_shape = img_train[0].shape #input shape for the U-Net
 
-    input_shape = img_train[0].shape
-
+    #multiGPU processing
     with strategy.scope():
-
+        #train custom U-Net model based on parameters you want to train
         model = custom_unet(
         input_shape,
         filters=64,
@@ -99,7 +102,7 @@ def main():
     
 
     ##Compile and Train
-
+        #save model name for evaluation
         model_filename = 'Basic_LGG_aug_UNET_01LR.h5'
         callback_checkpoint = ModelCheckpoint(
         model_filename, 
