@@ -186,10 +186,9 @@ class HyperBasicUNet(hypermodel.HyperModel):
         outputs = Conv2D(self.classes, (1, 1), activation=output_activation)(x)
 
         
-        #model = Model(inputs=[inputs], outputs=[outputs])
         
         model = keras.Model(inputs, outputs, name='UNet')
-        optimizer_name = #hp.Choice('optimizer', ['adam', 'rmsprop', 'sgd'], default='adam')
+        #optimizer_name = hp.Choice('optimizer', ['adam', 'rmsprop', 'sgd'], default='adam')
         optimizer_name = 'adam'
         optimizer = keras.optimizers.get(optimizer_name)
         #optimizer.learning_rate = hp.Choice('learning_rate', [0.1, 0.01, 0.001,0.0001,0.00001], default=0.01)
