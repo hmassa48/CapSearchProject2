@@ -10,7 +10,9 @@ To run the tuner, it is set up to run similar to the in keras models.
 
 ### Full U-Net Search
 
-This work created a tunable U-Net architecture using the Keras-Tuner.
+This work created a tunable U-Net architecture using the Keras-Tuner. To run the tunable U-Net, you have to import the HyperUNet class from the keras models folder and state the input shape as well as the number of classes. 
+
+
 
 ### Architectural U-Net Search for Project
 
