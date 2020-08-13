@@ -85,11 +85,11 @@ def image_mask_check(image_path, mask_path):
         img_p[0]=img_p[0]+'_mask'
         img_p='.'.join(img_p)
         mask_path.append(img_p)
-
+	
     if len(img_wm)==0:
         return True
     else:
-	return False
+        return False
 
 #Creates array of images read in from image path
 def read_in_MR_images(msk_path,img_path):
