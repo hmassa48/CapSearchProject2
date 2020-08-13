@@ -109,6 +109,7 @@ class HyperBasicUNet(hypermodel.HyperModel):
         
         
     def build(self, hp):
+        #create possible architecural parameters
         num_layers = hp.Int('layers', 3,6,1, default = 4)
         filters = hp.Choice('filters', values = [16,32,64,128], default = 64)
         activation = hp.Choice('activation', values = ['relu', 'elu'])
@@ -122,13 +123,12 @@ class HyperBasicUNet(hypermodel.HyperModel):
         output_activation="sigmoid"
         strides = (2,2)
         
-
         
         # Build U-Net model
         inputs = Input(self.input_shape)
         x = inputs
 
-        down_layers = []
+        down_layers = [] 
         for l in range(num_layers):
             x = conv2d_block(
             inputs=x,
