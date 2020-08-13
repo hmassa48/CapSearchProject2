@@ -13,6 +13,18 @@ def threshold_binarize(mask, threshold=0.5):
     thresh_mask = tf.where(above_thresh, mask=tf.ones_like(mask), thresh_mask=tf.zeros_like(mask)) 
     return thresh_mask
 
+"""
+The dice coefficient is a segmentation metric that helps analyze the ability for the image to evaluate how well it calculated the true values divided by all the real true values or 2*intersection (or TP) divided by 2* union or (2*TP + FN + FP)
+Based on the wikipedia post and medium article https://towardsdatascience.com/metrics-to-evaluate-your-semantic-segmentation-model-6bcb99639aa2#:~:text=Simply%20put%2C%20the%20Dice%20Coefficient,of%20pixels%20in%20both%20images.
+"""
+def dice_coef(truth, prediction,smooth=0):
+    true_f = K.flatten(truth) #flatten the true matrix for calculation
+    #line taken from internet (forgotten source, to speed up loss function, threshold_binarize was too slow in computation)
+    pred_f = K.cast(K.greater(K.flatten(prediction), 0.5), 'float32') #flatten and binarize the predicted matrix
+    intersection = true_f * pred_f #create calculation for which values are intersecting
+    score = 2. * K.sum(intersection) / (K.sum(true_f) + K.sum(pred_f)) #use final formula to divide intersecting true values by all values
+    return score
+
 
 """ 
 IOU metric calculates the intersection over the Union. This helps analyze the segmentation. 
@@ -23,7 +35,8 @@ changes were made to the overall code to make it easier to use and understand
 def iou(truth, prediction, smooth=1.):
     #flatten both arrays for calculation
     truth_f = K.flatten(truth)
-    pred_f = K.flatten(prediction)
+    pred_f = K.cast(prediction, 'float32') 
+    pred_f = K.flatten(pred_f)
     #calculate the intersection of the values 
     intersection = K.sum(truth_f * pred_f)
     return (intersection + smooth) / (K.sum(truth_f) + K.sum(pred_f) - intersection + smooth)
