@@ -60,8 +60,11 @@ def conv2d_block(
         c = BatchNormalization()(c)
     return c
 
+ """
+    Customisable UNet architecture (Ronneberger et al. 2015) modified general structure of downlayers saving to uplayers from https://github.com/karolzak/keras-unet
+    Cutomization inspired by the U-Net ++ architecture. This allows for decoder blocks to be traditional UpSampling Blocks or Transpose blocks. 
 
-
+"""
 
 def custom_unet(
     input_shape,
@@ -80,17 +83,11 @@ def custom_unet(
     output_activation="sigmoid",
 ):  # 'sigmoid' or 'softmax'
 
-    """
-    Customisable UNet architecture (Ronneberger et al. 2015).
-    Cutomization inspired by the U-Net ++ architecture. This allows for decoder blocks to be traditional UpSampling Blocks or Transpose blocks. 
-
-    """
-
     # Build U-Net model
     inputs = Input(input_shape)
     x = inputs
 
-    down_layers = []
+    down_layers = [] #save layers to mirror and connect
     for l in range(num_layers):
         x = conv2d_block(
             inputs=x,
@@ -118,7 +115,10 @@ def custom_unet(
 
     for conv in reversed(down_layers):
         filters //= 2  # decreasing number of filters with each layer
-        dropout -= dropout_change_per_layer
+        
+        if use_dropout_on_upsampling:
+            dropout -= dropout_change_per_layer #mirror the dropout change per layer
+        #if else statement for different decoder types 
         if decoder_type == 'transpose':
             x = Conv2DTranspose(filters, (3,3), strides=(2,2),padding='same', use_bias=not(use_batch_norm))(x)
             if use_batch_norm:
@@ -131,10 +131,12 @@ def custom_unet(
             x = Activation(activation)(x)
 
         else:
-            if decoder_type == 'simple_bilinear':
+            #choose upsampling type
+            if decoder_type == 'simple_bilinear': 
                 x = Conv2D(filters, 2, activation = activation, padding = 'same', kernel_initializer = 'he_normal')(UpSampling2D(interpolation='bilinear')(x))
             else:
                 x = Conv2D(filters, 2, activation = activation, padding = 'same', kernel_initializer = 'he_normal')(UpSampling2D(strides)(x))
+            #upsampling block continues not based on type
             x = concatenate([x, conv])
             x = conv2d_block(
             inputs=x,
