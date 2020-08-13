@@ -27,6 +27,26 @@ def load_images(main_path):
                 
     return image_path, mask_path
 
+#Skin Images were saved in a different format 
+#This function allows the loading of skin images into the file 
+#function to load the skin images 
+def read_in_skin_images(skin_path,msk_path,img_path):
+    Images = []
+    Masks = []
+  
+    for img in img_path:
+        temp_img = skin_path+'/image/' +img
+        temp_img = cv2.imread(temp_img)
+        Images.append(temp_img)
+
+    for msk in msk_path:
+        temp_msk = skin_path+ '/mask/'+msk
+        temp_msk = cv2.imread(temp_msk)
+        Masks.append(temp_msk)
+
+    return Images, Masks
+
+
 #Lung images were saved in a different format
 #This function allows the loading of lung images into the file 
 #function to load in lung images 
