@@ -111,7 +111,6 @@ class HyperBasicUNet(hypermodel.HyperModel):
     def build(self, hp):
         num_layers = hp.Int('layers', 3,6,1, default = 4)
         filters = hp.Choice('filters', values = [16,32,64,128], default = 64)
-        kernel = hp.Choice('kernel', values = [3,5,7], default = 3)
         activation = hp.Choice('activation', values = ['relu', 'elu'])
         use_batch_norm = hp.Boolean('batch_norm', default = False)
         dropout = hp.Float('dropout', 0, 0.4, 0.05, default = 0)
@@ -122,6 +121,7 @@ class HyperBasicUNet(hypermodel.HyperModel):
         #hyperparameters not tuning
         output_activation="sigmoid"
         strides = (2,2)
+        
 
         
         # Build U-Net model
@@ -189,10 +189,11 @@ class HyperBasicUNet(hypermodel.HyperModel):
         #model = Model(inputs=[inputs], outputs=[outputs])
         
         model = keras.Model(inputs, outputs, name='UNet')
-        optimizer_name = hp.Choice('optimizer', ['adam', 'rmsprop', 'sgd'], default='adam')
+        optimizer_name = #hp.Choice('optimizer', ['adam', 'rmsprop', 'sgd'], default='adam')
+        optimizer_name = 'adam'
         optimizer = keras.optimizers.get(optimizer_name)
-        optimizer.learning_rate = hp.Choice(
-                'learning_rate', [0.1, 0.01, 0.001,0.0001,0.00001], default=0.01)
+        #optimizer.learning_rate = hp.Choice('learning_rate', [0.1, 0.01, 0.001,0.0001,0.00001], default=0.01)
+        optimizer.learning_rate = 0.0001
         model.compile(optimizer=optimizer,loss=bce_dice_loss,metrics=[iou,iou_thresholded])
         return model
     
