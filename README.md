@@ -85,6 +85,9 @@ Run the environment saved in the files above
 module load anaconda/wml
 bootstrap_conda
 
+conda create --name env697 --file env697.txt
+
 conda activate env697
+
 
 Submit the Slurm directories saved in the slurm folder above to submit jobs 
