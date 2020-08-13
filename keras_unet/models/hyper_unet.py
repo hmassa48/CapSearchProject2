@@ -191,7 +191,7 @@ class HyperBasicUNet(hypermodel.HyperModel):
         optimizer_name = hp.Choice('optimizer', ['adam', 'rmsprop', 'sgd'], default='adam')
         optimizer = keras.optimizers.get(optimizer_name)
         optimizer.learning_rate = hp.Choice(
-                'learning_rate', [0.1, 0.01, 0.001], default=0.01)
+                'learning_rate', [0.1, 0.01, 0.001,0.0001,0.00001], default=0.01)
         model.compile(
                 optimizer=optimizer,
                 loss='binary_crossentropy',
