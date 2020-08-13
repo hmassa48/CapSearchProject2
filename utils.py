@@ -47,17 +47,15 @@ def read_in_skin_images(skin_path,msk_path,img_path):
     return Images, Masks
 
 
+
+
 #Lung images were saved in a different format
 #This function allows the loading of lung images into the file 
 #function to load in lung images 
 def read_in_lung_images(lung_path,msk_path,img_path):
-    #create empty array to return with the lung images 
     Images = []
     Masks = []
   
-    #loop through lung and mask images 
-    #create the path to those images and read in the values with cv2
-    #append the image to the respective array 
     for img in img_path:
         temp_img = lung_path+'/2d_images/' +img
         temp_img = cv2.imread(temp_img)
