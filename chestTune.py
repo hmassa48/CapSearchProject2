@@ -24,7 +24,7 @@ import cv2
 from utils import *
 from keras_unet.metrics import iou, iou_thresholded
 from keras_unet.losses import bce_dice_loss
-from keras_unet.models import HyperUNet
+from keras_unet.models import HyperBasicUNet
 
 
 from tensorflow.python.client import device_lib
