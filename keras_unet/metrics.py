@@ -6,18 +6,29 @@ import tensorflow as tf
 import numpy as np
 from keras import backend as K
 
+#function that allows the thresholding of mask images 
+def threshold_binarize(mask, threshold=0.5):
+    above_thresh = tf.greater_equal(mask, tf.constant(threshold)) #find values above threshold
+    #values that are not above the threshold mark as 0 in thresholded mask, otherwise 1
+    thresh_mask = tf.where(above_thresh, mask=tf.ones_like(mask), thresh_mask=tf.zeros_like(mask)) 
+    return thresh_mask
 
+
+""" 
+IOU metric calculates the intersection over the Union. This helps analyze the segmentation. 
+This was calculated similar to Dice Coefficient using the same medium article 
+https://towardsdatascience.com/metrics-to-evaluate-your-semantic-segmentation-model-6bcb99639aa2#:~:text=Simply%20put%2C%20the%20Dice%20Coefficient,of%20pixels%20in%20both%20images.
+changes were made to the overall code to make it easier to use and understand
+"""
 def iou(truth, prediction, smooth=1.):
+    #flatten both arrays for calculation
     truth_f = K.flatten(truth)
     pred_f = K.flatten(prediction)
+    #calculate the intersection of the values 
     intersection = K.sum(truth_f * pred_f)
     return (intersection + smooth) / (K.sum(truth_f) + K.sum(pred_f) - intersection + smooth)
 
-def threshold_binarize(x, threshold=0.5):
-    ge = tf.greater_equal(x, tf.constant(threshold))
-    y = tf.where(ge, x=tf.ones_like(x), y=tf.zeros_like(x))
-    return y
-
+#evaluate IOU thresholded to compare to actual IOU value 
 def iou_thresholded(truth, prediction, threshold=0.5, smooth=1.):
     #binarize the prediction image
     thres_pred = threshold_binarize(prediction, threshold)
