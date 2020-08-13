@@ -25,7 +25,7 @@ from utils import *
 from keras_unet.metrics import iou, iou_thresholded
 from keras_unet.losses import bce_dice_loss
 from keras_unet.models import HyperBasicUNet
-
+import numpy as np
 
 from tensorflow.python.client import device_lib
 print(device_lib.list_local_devices())
@@ -60,7 +60,6 @@ for i in range(0,len(masks)):
     #images
     im = images[i]
     images[i] = cv2.resize(im,(256,256)) #resize the images to a standard size for memory constraints
-
 
 
 #convert the images to arrays
