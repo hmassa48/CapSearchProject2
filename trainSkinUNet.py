@@ -152,7 +152,7 @@ def main():
 
 
         history = model.fit_generator(
-        train_gen,
+        train_generator,
         steps_per_epoch=STEPS_PER_EPOCH,
         epochs=600,
         validation_data=(img_val, mask_val),
