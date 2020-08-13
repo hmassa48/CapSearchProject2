@@ -9,6 +9,7 @@ from tensorflow.keras import layers
 from tensorflow.keras import backend
 
 from kerastuner.engine import hypermodel
+from ..losses import bce_dice_loss
 from ..metrics import iou, iou_thresholded
 
 from tensorflow.keras.models import Model
@@ -192,9 +193,7 @@ class HyperBasicUNet(hypermodel.HyperModel):
         optimizer = keras.optimizers.get(optimizer_name)
         optimizer.learning_rate = hp.Choice(
                 'learning_rate', [0.1, 0.01, 0.001,0.0001,0.00001], default=0.01)
-        model.compile(
-                optimizer=optimizer,
-                loss='binary_crossentropy',
-                metrics=[iou, iou_thresholded])
+        model.compile(optimizer=optimizer,loss=bce_dice_loss,metrics=[iou,iou_thresholded])
         return model
+    
     
