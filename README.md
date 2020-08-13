@@ -40,12 +40,12 @@ This project ran the tunable U-Net network to evaluate the best architecture for
 There are two scripts to run for each of the dataset values. The first script is the trainLungUnet.py. This script runs the U-Net model. Within this script, the hyperparameters can be changed to match the traditional U-Net, or a tuned version of the U-Net. 
 
 To run this model on your own system use: python trainLungUNet.py
-To run this model on Euler use: sbatch slurm_basicLungUNet 
+To run this model on Euler use: sbatch slurm_Lung_basic_Unet.sh
 
 Then to tune the model, the associating tuning script is the tuneChest.py script. This script utilizes the HyperUNet class described above. This script will output a textfile with the chosen hyperparameters of the best 10 models found from the HyperUNet search. This allows the user to compare the top models found. 
 
 To run this model on your own system use: python tuneChest.py
-To run this model on Euler use: sbatch slurm_Chesttune 
+To run this model on Euler use: sbatch slurm_chestTune.sh
 
 After the top models have been found, this work took the parameters from the best architecture found from the HyperUNet and used them in the script that runs the U-Net model. In other words, I changed the parameters within the custom U-Net of trainLungUNet.py script and re-ran the trainLungUNet.py script. 
 
@@ -55,21 +55,28 @@ This dataset followed the same techniques as above. Therefore, I am just going t
 
 To run the traditional U-Net, or tuned version after changing the parameters within the script: 
 To run this model on your own system use: python trainBasicUNet.py
-To run this model on Euler use: sbtach slurm_basicUNet
+To run this model on Euler use: sbtach slurm_LGG_basicUnet.sh
 
 To run the Tuning script:
 To run this model on your own system use: python tune
+To run this model on Euler use: sbtach slurm_onetune.sh
 
 ### Skin Lesion Segmentation U-Net
 
 This dataset followed the same techniques as above. Therefore, I am just going to explain how to run the scripts. 
 
 To run the traditional U-Net, or tuned version after changing the parameters within the script: 
-To run this model on your own system use: python trainBasicUNet.py
-To run this model on Euler use: sbtach slurm_basicUNet
+To run this model on your own system use: python trainSkinUNet.py
+To run this model on Euler use: sbtach slurm_Skin_basicUNet.sh
 
 To run the Tuning script:
 To run this model on your own system use: python tune
+To run this model on Euler use: sbatch slurm_skinTune.sh
+
+## Evaluating the Models 
+
+Jupyter notebooks were created for each of the datasets to be evaluated. 
+
 
 ## Running on the Euler Cluster 
 
