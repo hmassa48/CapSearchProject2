@@ -98,11 +98,11 @@ val_generator = train_datagen.flow(
 
 hp = HyperParameters()
 #fix algorithmic hyperparameters
-hp.Fixed('learning rate', value = 0.001)
+hp.Fixed('learning_rate', value = 0.001)
 hp.Fixed('optimizer_name', value = 'adam')
 hp.Fixed('kernel', value = 3)
 
-hypermodel = HyperUNet(input_shape = (256,256,3), classes = 1)
+hypermodel = HyperBasicUNet(input_shape = (256,256,3), classes = 1)
 
 tuner_hb = Hyperband(
             hypermodel,
@@ -115,7 +115,6 @@ tuner_hb = Hyperband(
         )
 
 tuner_hb.search_space_summary()
-
 
 
 tuner_hb.search(train_generator,epochs = 500,verbose = 1,validation_data = (img_test,mask_test))
