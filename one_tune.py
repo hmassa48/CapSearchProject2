@@ -35,7 +35,7 @@ print(device_lib.list_local_devices())
 
 
 #load in image dataset 
-image_paths,mask_paths = load_images("lgg-mri-segmentation/kaggle_3m/")
+image_paths,mask_paths = load_images("Data/lgg-mri-segmentation/kaggle_3m/")
 
 if image_mask_check(image_paths, mask_paths):
     masks,images = read_in_MR_images(image_paths,mask_paths)
