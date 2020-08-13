@@ -5,16 +5,9 @@ While some different loss functions are defined, the final loss function chosen 
 
 from keras import backend as K
 from keras.losses import binary_crossentropy
+from metrics import dice_coef
 
-#based on the wikipedia article and medium post on how to calculate the dice coefficient 
-#the dice coefficient helps to take 2 *intersection (or TP values ) divided by 2* the union (or 2*TP + FN + FP) values 
-def dice_coef(y_true, y_pred,smooth=0):
-    y_true_f = K.flatten(y_true) #flatten the true matrix for calculation
-    y_pred = K.cast(y_pred, 'float32') #make sure prediction values are float to make true
-    y_pred_f = K.cast(K.greater(K.flatten(y_pred), 0.5), 'float32') #flatten and binarize the predicted matrix
-    intersection = y_true_f * y_pred_f #create calculation for which values are intersecting
-    score = 2. * K.sum(intersection) / (K.sum(y_true_f) + K.sum(y_pred_f)) #use final formula to divide intersecting true values by all values
-    return score
+
 
 #This function creates loss based off of the dice coefficient 
 def dice_loss(y_true, y_pred,smooth = 1):
