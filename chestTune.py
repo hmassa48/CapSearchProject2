@@ -96,11 +96,6 @@ train_generator = train_datagen.flow(
 val_generator = train_datagen.flow(
     img_test, mask_test)
 
-hp = HyperParameters()
-#fix algorithmic hyperparameters
-hp.Fixed('learning_rate', value = 0.001)
-hp.Fixed('optimizer_name', value = 'adam')
-hp.Fixed('kernel', value = 3)
 
 hypermodel = HyperBasicUNet(input_shape = (256,256,3), classes = 1)
 
