@@ -23,21 +23,6 @@ from keras_unet.losses import bce_dice_loss
 
 import numpy as np 
 
-def read_in_images(lung_path,msk_path,img_path):
-    Images = []
-    Masks = []
-  
-    for img in img_path:
-        temp_img = lung_path+'/2d_images/' +img
-        temp_img = cv2.imread(temp_img)
-        Images.append(temp_img)
-
-    for msk in msk_path:
-        temp_msk = lung_path+ '/2d_masks/'+msk
-        temp_msk = cv2.imread(temp_msk)
-        Masks.append(temp_msk)
-
-    return Images, Masks
 
 
 #Upload and prepare data 
@@ -54,31 +39,32 @@ def main():
     img_path = lung_path + '/2d_images/'
     msk_path = lung_path + '/2d_masks/'
 
+    #list all images and masks 
     imgs = os.listdir(img_path)
     msks = os.listdir(msk_path)
-    #sort 
+    #sort images and masks
     msks = sorted(msks)
     imgs = sorted(imgs)
 
-    images,masks = read_in_images(lung_path,msks,imgs)
+    #read in images and masks 
+    images,masks = read_in_lung_images(lung_path,msks,imgs)
 
-
-	
+    #set up basic preprocessing 
     for i in range(0,len(masks)):
         m = masks[i]
-        m = m[:,:,0]
-        m.reshape(m.shape[0],m.shape[1])
-        m = cv2.resize(m,(256,256))
+        m = m[:,:,0] #binarize the masks
+        m.reshape(m.shape[0],m.shape[1]) #reshape binary masks 
+        m = cv2.resize(m,(256,256)) #resize the masks due to memory constraints 
         masks[i] = m
         #images
         im = images[i]
-        images[i] = cv2.resize(im,(256,256))
+        images[i] = cv2.resize(im,(256,256)) #resize the images due to memory constraints 
 
     #make Arrays 
     images = np.asarray(images)
     masks = np.asarray(masks)
-    masks = masks / 255
-    masks = masks.reshape(masks.shape[0],masks.shape[1],masks.shape[2],1)
+    masks = masks / masks.max() #normalize the masks 
+    masks = masks.reshape(masks.shape[0],masks.shape[1],masks.shape[2],1) #reshape the masks to binary set up 
     
 
     #split the data
@@ -95,14 +81,17 @@ def main():
     val_generator = train_datagen.flow(
         img_val, mask_val)
 
-
-
+    #standardize steps per epoch based on the dataset 
     STEPS_PER_EPOCH = len(img_train) // 16
     #Get U Net 
 
 
-    input_shape = img_train[0].shape
+    input_shape = img_train[0].shape #get input shape for the U-Net model
+
+    #use multiGPU training strategy	
     with strategy.scope():
+	#change parameters based on model you want to train 
+	#set up custom u net model 
         model = custom_unet(
         input_shape,
         filters=64,
@@ -118,7 +107,7 @@ def main():
     
 
     ##Compile and Train
-
+        #save model name based on model you are training and want to evaluate
         model_filename = 'traditional_600_LR0001_BASIC_LUNG_UNET.h5'
         callback_checkpoint = ModelCheckpoint(
         model_filename, 
