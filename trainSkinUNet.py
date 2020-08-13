@@ -50,7 +50,7 @@ def main():
 
 
     #load dataset
-    skin_path = 'skin_lesions'
+    skin_path = 'Data/skin_lesions'
 
     img_path = skin_path + '/image/'
     msk_path = skin_path + '/mask/'
