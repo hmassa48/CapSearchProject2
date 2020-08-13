@@ -41,7 +41,7 @@ def main():
     mask_paths = sorted(mask_paths)
 
     if image_mask_check(image_paths, mask_paths):
-        masks,images = read_in_images(image_paths,mask_paths)
+        masks,images = read_in_MR_images(image_paths,mask_paths)
     
     for i in range(0,len(masks)):
         m = masks[i]
