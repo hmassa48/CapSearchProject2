@@ -1,7 +1,7 @@
 """
 Script to find the best architectures for the Skin Lesion Dataset
 """
-
+from sklearn.model_selection import train_test_split
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import tensorflow.keras as keras
 from tensorflow.keras.models import Model
