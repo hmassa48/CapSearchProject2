@@ -7,11 +7,11 @@ import numpy as np
 from keras import backend as K
 
 #function that allows the thresholding of mask images 
-def threshold_binarize(mask, threshold=0.5):
-    above_thresh = tf.greater_equal(mask, tf.constant(threshold)) #find values above threshold
+def threshold_binarize(x, threshold=0.5):
+    ge = tf.greater_equal(x, tf.constant(threshold)) #find values above threshold
     #values that are not above the threshold mark as 0 in thresholded mask, otherwise 1
-    thresh_mask = tf.where(above_thresh, mask=tf.ones_like(mask), thresh_mask=tf.zeros_like(mask)) 
-    return thresh_mask
+    y = tf.where(ge, x=tf.ones_like(x), y=tf.zeros_like(x))
+    return y
 
 """
 The dice coefficient is a segmentation metric that helps analyze the ability for the image to evaluate how well it calculated the true values divided by all the real true values or 2*intersection (or TP) divided by 2* union or (2*TP + FN + FP)
