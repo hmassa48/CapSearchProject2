@@ -7,6 +7,7 @@ import numpy as np
 from keras import backend as K
 
 #function that allows the thresholding of mask images 
+#taken from medium article with changed threshold value
 def threshold_binarize(x, threshold=0.5):
     ge = tf.greater_equal(x, tf.constant(threshold)) #find values above threshold
     #values that are not above the threshold mark as 0 in thresholded mask, otherwise 1
