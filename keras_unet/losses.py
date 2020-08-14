@@ -5,9 +5,19 @@ While some different loss functions are defined, the final loss function chosen 
 
 from keras import backend as K
 from keras.losses import binary_crossentropy
-from metrics import dice_coef
+#from metrics import dice_coef
 
-
+"""
+The dice coefficient is a segmentation metric that helps analyze the ability for the image to evaluate how well it calculated the true values divided by all the real true values or 2*intersection (or TP) divided by 2* union or (2*TP + FN + FP)
+Based on the wikipedia post and medium article https://towardsdatascience.com/metrics-to-evaluate-your-semantic-segmentation-model-6bcb99639aa2#:~:text=Simply%20put%2C%20the%20Dice%20Coefficient,of%20pixels%20in%20both%20images.
+"""
+def dice_coef(truth, prediction,smooth=0):
+    true_f = K.flatten(truth) #flatten the true matrix for calculation
+    #line taken from internet (forgotten source, to speed up loss function, threshold_binarize was too slow in computation)
+    pred_f = K.cast(K.greater(K.flatten(prediction), 0.5), 'float32') #flatten and binarize the predicted matrix
+    intersection = true_f * pred_f #create calculation for which values are intersecting
+    score = 2. * K.sum(intersection) / (K.sum(true_f) + K.sum(pred_f)) #use final formula to divide intersecting true values by all values
+    return score
 
 #This function creates loss based off of the dice coefficient 
 def dice_loss(y_true, y_pred,smooth = 1):
