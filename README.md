@@ -8,22 +8,14 @@ To run the tuner, it is set up to run similar to the in keras models.
 
 ## Running the Tunable U-Net 
 
-### Full U-Net Search
+### Basic U-Net Search
 
-This work created a tunable U-Net architecture using the Keras-Tuner. To run the tunable U-Net, you have to import the HyperUNet class from the keras models folder and state the input shape as well as the number of classes. 
+This work created a tunable U-Net architecture using the Keras-Tuner. To run the tunable U-Net, you have to import the HyperBasicUNet class from the keras models folder and state the input shape as well as the number of classes. The HyperBasicUNet class defined for this work only tunes 8 architectural parameters, more parameters can be added within the HyperBasicUNet class. 
 
-hypermodel = HyperUNet(input_shape, num_classes) 
-
-This will search all possible U-Net parameters listed. This work focused on the architectural aspects of the U-Net, that can be found and more explained in the section below. 
-
-### Architectural U-Net Search for Project
-
-For this work, I focused on the architectural aspects of the U-Net model. For this reason, I fixed some hyperparameters in the tunable U-Net so that only the 8 parameters I wanted to tune were tuned. This can be done and is shown in the image below. 
-
-![Fixed Parameters](/Images/FixedParameters.png)
+![Fixed Parameters](/Images/hyperunet.png)
 
 
-This image shows the values needed to input to the model. Then, it also shows the structuring of the overall tuner along with how to initiate a search. The images will have to be pre-processed between importing the necessary packages and using the search strategy. This provides a quick introduction on how to use the HyperUNet class, but full search examples are shown in python scripts such as tuneChest.py and tuneSkin.py. 
+This image shows the values needed to input to the model. Then, it also shows the structuring of the overall tuner along with how to initiate a search. The images will have to be pre-processed between importing the necessary packages and using the search strategy. This provides a quick introduction on how to use the HyperUNet class, but full search examples are shown in python scripts, explained more below. 
 
 ### Other Tunable U-Nets 
 
@@ -31,9 +23,17 @@ Work is being done to add more tunable U-Nets to the repository.
 
 ## Training for Data Sets included in Project 
 
-This project ran the tunable U-Net network to evaluate the best architecture for four different datasets. These datasets can be found listed below, but there were different pre-processing and training techniques used for each. A toy dataset for each of the models has been added. 
+This project ran the tunable U-Net network to evaluate the best architecture for four different datasets. These datasets can be found listed below, but there were different pre-processing and training techniques used for each. A toy dataset for each of the models has been added to the 
 
 ![Data Set Examples](/Images/DataSetImage.png)
+
+### Set up Environment for training 
+
+There are many packages required to run this program. Set up for the program is done with an anaconda environment. To set up the environment, you have to set up and activate the enviroment with the following lines: 
+
+conda create --name env697 --file env697.txt
+
+conda activate env697
 
 ### Lung Segmentation U-Net
 
