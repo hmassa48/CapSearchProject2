@@ -75,7 +75,7 @@ To run this model on Euler use: sbatch slurm_skinTune.sh
 
 ## Evaluating the Models 
 
-Jupyter notebooks were created for each of the datasets to be evaluated. 
+Jupyter notebooks were created for each of the datasets to be evaluated. The evaluation metrics were performed on saved models. The model files were too large to upload into github, so they do not have a toy dataset. 
 
 
 ## Running on the Euler Cluster 
