@@ -60,7 +60,7 @@ def conv2d_block(
         c = BatchNormalization()(c)
     return c
 
- """
+"""
     Customisable UNet architecture (Ronneberger et al. 2015) modified general structure of downlayers saving to uplayers from https://github.com/karolzak/keras-unet
     Cutomization inspired by the U-Net ++ architecture. This allows for decoder blocks to be traditional UpSampling Blocks or Transpose blocks. 
 
