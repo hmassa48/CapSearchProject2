@@ -87,10 +87,14 @@ bootstrap_conda
 
 conda create --name env697 --file env697.txt
 
-** due to dependency problems with the current keras-tuner and tensorflow_gpu you have to then 
+** due to dependency problems with the current keras-tuner and tensorflow_gpu you have to then: 
+(otherwise the program will end with an eagerTensor error stating that it is the incorrect form of tensorflow after a few epochs) 
 pip intall keras-tuner 
 pip install tensorflow-gpu
+
+
 conda activate env697
+
 
 
 Submit the Slurm directories saved in the slurm folder above to submit jobs 
