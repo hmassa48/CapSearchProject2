@@ -87,6 +87,9 @@ bootstrap_conda
 
 conda create --name env697 --file env697.txt
 
+** due to dependency problems with the current keras-tuner and tensorflow_gpu you have to then 
+pip intall keras-tuner 
+pip install tensorflow-gpu
 conda activate env697
 
 
