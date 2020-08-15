@@ -35,6 +35,8 @@ conda create --name env697 --file env697.txt
 
 conda activate env697
 
+pip install tensorflow-gpu (dependency, has to be installed afterwards)
+
 ### Lung Segmentation U-Net
 
 There are two scripts to run for each of the dataset values. The first script is the trainLungUnet.py. This script runs the U-Net model. Within this script, the hyperparameters can be changed to match the traditional U-Net, or a tuned version of the U-Net. 
@@ -89,7 +91,9 @@ conda create --name env697 --file env697.txt
 
 ** due to dependency problems with the current keras-tuner and tensorflow_gpu you have to then: 
 (otherwise the program will end with an eagerTensor error stating that it is the incorrect form of tensorflow after a few epochs) 
-pip intall keras-tuner 
+
+pip install keras-tuner 
+
 pip install tensorflow-gpu
 
 
