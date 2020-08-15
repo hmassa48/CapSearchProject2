@@ -23,7 +23,7 @@ Work is being done to add more tunable U-Nets to the repository.
 
 ## Training for Data Sets included in Project 
 
-This project ran the tunable U-Net network to evaluate the best architecture for four different datasets. These datasets can be found listed below, but there were different pre-processing and training techniques used for each. A toy dataset for each of the models has been added to the 
+This project ran the tunable U-Net network to evaluate the best architecture for four different datasets. These datasets can be found listed below, but there were different pre-processing and training techniques used for each. A toy dataset for each of the models has been added to the repository to see how the images look. A toy dataset for the Lung images has been added to run and evaluate that code. 
 
 ![Data Set Examples](/Images/DataSetImage.png)
 
