@@ -115,7 +115,7 @@ class HyperBasicUNet(hypermodel.HyperModel):
         activation = hp.Choice('activation', values = ['relu', 'elu'])
         use_batch_norm = hp.Boolean('batch_norm', default = False)
         dropout = hp.Float('dropout', 0, 0.4, 0.05, default = 0)
-        dropout_change_per_layer = hp.Float('drop_out_change_per_layer', 0.0,0.3,0.025)
+        dropout_change_per_layer = hp.Float('drop_out_change_per_layer', 0.0,0.05,0.005)
         use_dropout_on_upsampling = hp.Boolean('dropout_on_upsampling', default = False)
         decoder_type = hp.Choice('decoder_type', values = ['simple', 'transpose'])
         
