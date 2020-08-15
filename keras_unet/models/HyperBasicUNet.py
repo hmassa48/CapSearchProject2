@@ -112,7 +112,7 @@ class HyperBasicUNet(hypermodel.HyperModel):
         #create possible architecural parameters
         num_layers = hp.Int('layers', 3,6,1, default = 4)
         filters = hp.Choice('filters', values = [16,32,64,128], default = 64)
-        activation = hp.Choice('activation', values = ['relu', 'elu'])
+        activation = hp.Choice('activation',['relu','elu'],default = 'relu')
         use_batch_norm = hp.Boolean('batch_norm', default = False)
         dropout = hp.Float('dropout', 0, 0.6, 0.05, default = 0)
         dropout_change_per_layer = hp.Float('drop_out_change_per_layer', 0.0,0.05,0.005)
