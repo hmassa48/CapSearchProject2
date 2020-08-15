@@ -1,3 +1,7 @@
+"""
+Tune the Lung images for if the Hyper Class doesn't work with GPU and there are dependency problems 
+"""
+
 import kerastuner as kt
 import tensorflow as tf
 import numpy as np
@@ -31,24 +35,6 @@ print(device_lib.list_local_devices())
 
 
 NUM_EPOCH_SEARCH = 50
-
-def read_in_images(lung_path,msk_path,img_path):
-    Images = []
-    Masks = []
-  
-    for img in img_path:
-        temp_img = lung_path+'/2d_images/' +img
-        temp_img = cv2.imread(temp_img)
-        Images.append(temp_img)
-
-    for msk in msk_path:
-        temp_msk = lung_path+ '/2d_masks/'+msk
-        temp_msk = cv2.imread(temp_msk)
-        Masks.append(temp_msk)
-
-    return Images, Masks
-
-
 
 
 
@@ -152,6 +138,10 @@ def build_model(hp):
             x = Activation(activation)(x)
 
         else:
+            if decoder_type == 'simple_bilinear':
+                x = Conv2D(filters, 2, activation = activation, padding = 'same', kernel_initializer = 'he_normal')(UpSampling2D(interpolation='bilinear')(x))
+            else:
+                x = Conv2D(filters, 2, activation = activation, padding = 'same', kernel_initializer = 'he_normal')(UpSampling2D(strides)(x))
             x = UpSampling2D((2,2))(x)
             x = concatenate([x, conv])
             x = conv2d_block(
@@ -198,7 +188,7 @@ msks = os.listdir(msk_path)
 msks = sorted(msks)
 imgs = sorted(imgs)
 
-images,masks = read_in_images(lung_path,msks,imgs)
+images,masks = read_in_lung_images(lung_path,msks,imgs)
 
 
         
