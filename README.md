@@ -51,7 +51,9 @@ Then to tune the model, the associating tuning script is the tuneChest.py script
 To run this model on your own system use: python tuneChest.py
 To run this model on Euler use: sbatch slurm_chestTune.sh
 
-After the top models have been found, this work took the parameters from the best architecture found from the HyperUNet and used them in the script that runs the U-Net model. In other words, I changed the parameters within the custom U-Net of trainLungUNet.py script and re-ran the trainLungUNet.py script. 
+After the top models have been found, this work took the parameters from the best architecture found from the HyperUNet and used them in the script that runs the U-Net model. In other words, I changed the parameters within the custom U-Net of trainLungUNet.py script and re-ran the trainLungUNet.py script.
+
+** The Lung Dataset is the dataset with enough images able to be loaded into GitHub for a toy dataset for a full training and tuning. Due to GPU dependencies, the Hyper Class throws an eager tensor error when the dataset is too large and being trained on a GPU for an unspecified number of epochs. For this, I have added in a solution I used in the project when this came up. I had to build in the class into the actual run file and not collect it from elsewhere. It is an odd dependency error others online have mentioned. Since it happens randomly and the keras-tuner team has put up a post saying they are working on fixing it, I have set up the main code as the HyperBasicUNet class. But due to the fact that it might break during tuning, I have added the chestTune2.py which builds it within the class. 
 
 ### LGG Brain MR Segmentation U-Net
 
