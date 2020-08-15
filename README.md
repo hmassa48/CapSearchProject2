@@ -91,3 +91,5 @@ conda activate env697
 
 
 Submit the Slurm directories saved in the slurm folder above to submit jobs 
+
+(** to run the HyperBasicUNet scripts on euler with current GPU settings the number of layers and filters need to be reduced. The script in the github has too large of a model for the GPU to save memory at current state) 
