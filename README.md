@@ -80,27 +80,4 @@ To run this model on Euler use: sbatch slurm_skinTune.sh
 Jupyter notebooks were created for each of the datasets to be evaluated. The evaluation metrics were performed on saved models. The model files were too large to upload into github, so they do not have a toy dataset. 
 
 
-## Running on the Euler Cluster 
 
-Run the environment saved in the files above
-
-module load anaconda/wml
-bootstrap_conda
-
-conda create --name env697 --file env697.txt
-
-** due to dependency problems with the current keras-tuner and tensorflow_gpu you have to then: 
-(otherwise the program will end with an eagerTensor error stating that it is the incorrect form of tensorflow after a few epochs) 
-
-pip install keras-tuner 
-
-pip install tensorflow-gpu
-
-
-conda activate env697
-
-
-
-Submit the Slurm directories saved in the slurm folder above to submit jobs 
-
-(** to run the HyperBasicUNet scripts on euler with current GPU settings the number of layers and filters need to be reduced. The script in the github has too large of a model for the GPU to save memory at current state) 
