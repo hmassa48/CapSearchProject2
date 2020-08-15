@@ -37,6 +37,8 @@ conda activate env697
 
 pip install tensorflow-gpu (dependency, has to be installed afterwards)
 
+* the slurm files for training have been moved into a separate folder for visual sanity. If you want to run on Euler, the slurm files have to be added to the main directory. 
+
 ### Lung Segmentation U-Net
 
 There are two scripts to run for each of the dataset values. The first script is the trainLungUnet.py. This script runs the U-Net model. Within this script, the hyperparameters can be changed to match the traditional U-Net, or a tuned version of the U-Net. 
