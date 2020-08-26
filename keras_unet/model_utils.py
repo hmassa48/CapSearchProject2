@@ -30,6 +30,75 @@ def normalize_MRIvolume(MRI_volume):
     return MRI_volume
 
 
+# Runtime data augmentation
+def get_augmented(
+    X_train,
+    Y_train,
+    X_val=None,
+    Y_val=None,
+    batch_size=32,
+    seed=0,
+    data_gen_args=dict(
+        rotation_range=10.0,
+        # width_shift_range=0.02,
+        height_shift_range=0.02,
+        shear_range=5,
+        # zoom_range=0.3,
+        horizontal_flip=True,
+        vertical_flip=False,
+        fill_mode="constant",
+    ),
+):
+    """[summary]
+    
+    Args:
+        X_train (numpy.ndarray): [description]
+        Y_train (numpy.ndarray): [description]
+        X_val (numpy.ndarray, optional): [description]. Defaults to None.
+        Y_val (numpy.ndarray, optional): [description]. Defaults to None.
+        batch_size (int, optional): [description]. Defaults to 32.
+        seed (int, optional): [description]. Defaults to 0.
+        data_gen_args ([type], optional): [description]. Defaults to dict(rotation_range=10.0,# width_shift_range=0.02,height_shift_range=0.02,shear_range=5,# zoom_range=0.3,horizontal_flip=True,vertical_flip=False,fill_mode="constant",).
+    
+    Returns:
+        [type]: [description]
+    """
+
+    # Train data, provide the same seed and keyword arguments to the fit and flow methods
+    X_datagen = ImageDataGenerator(**data_gen_args)
+    Y_datagen = ImageDataGenerator(**data_gen_args)
+    X_datagen.fit(X_train, augment=True, seed=seed)
+    Y_datagen.fit(Y_train, augment=True, seed=seed)
+    X_train_augmented = X_datagen.flow(
+        X_train, batch_size=batch_size, shuffle=True, seed=seed
+    )
+    Y_train_augmented = Y_datagen.flow(
+        Y_train, batch_size=batch_size, shuffle=True, seed=seed
+    )
+
+    train_generator = zip(X_train_augmented, Y_train_augmented)
+
+    if not (X_val is None) and not (Y_val is None):
+        # Validation data, no data augmentation, but we create a generator anyway
+        X_datagen_val = ImageDataGenerator(**data_gen_args)
+        Y_datagen_val = ImageDataGenerator(**data_gen_args)
+        X_datagen_val.fit(X_val, augment=False, seed=seed)
+        Y_datagen_val.fit(Y_val, augment=False, seed=seed)
+        X_val_augmented = X_datagen_val.flow(
+            X_val, batch_size=batch_size, shuffle=False, seed=seed
+        )
+        Y_val_augmented = Y_datagen_val.flow(
+            Y_val, batch_size=batch_size, shuffle=False, seed=seed
+        )
+
+        # combine generators into one which yields image and masks
+        val_generator = zip(X_val_augmented, Y_val_augmented)
+
+        return train_generator, val_generator
+    else:
+        return train_generator
+
+
 """
 Set Up for Pre-processing each of the image and mask 
 """
